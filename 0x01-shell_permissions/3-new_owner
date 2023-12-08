@@ -1,4 +1,3 @@
 #!/bin/bash
 chown betty hello
-chmod c+x 3-new_owner
-./3-new_owner
+
