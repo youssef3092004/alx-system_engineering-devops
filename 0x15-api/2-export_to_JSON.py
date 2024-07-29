@@ -1,54 +1,28 @@
 #!/usr/bin/python3
-"""
-Export employee TODO list data in JSON format.
-"""
-
+"""export data in the JSON format"""
 import json
 import requests
 import sys
 
-
-def export_to_json(employee_id):
-    """
-    Fetches TODO list data for a specified employee and exports it to a JSON
-    file.
-
-    Args:
-        employee_id (int): The ID of the employee whose TODO list data is to
-        be fetched.
-
-    Returns:
-        None
-    """
+if __name__ == '__main__':
     url = "https://jsonplaceholder.typicode.com/"
-    user_response = requests.get(f"{url}users/{employee_id}")
-    todos_response = requests.get(f"{url}todos?userId={employee_id}")
+    iD = sys.argv[1]
+
+    user_response = requests.get(f"{url}/users/{iD}")
+    todos_response = requests.get(f"{url}/todos?userId={iD}")
 
     user_data = user_response.json()
     todos_data = todos_response.json()
 
     username = user_data.get('username')
-    data = {employee_id: []}
+    data = {iD: []}
     for task in todos_data:
         task_info = {
             "task": task.get('title'),
             "completed": task.get('completed'),
             "username": username
         }
-        data[employee_id].append(task_info)
+        data[iD].append(task_info)
 
-    with open(f"{employee_id}.json", "w") as jsonfile:
-        json.dump(data, jsonfile, indent=4)
-
-
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: ./0-export_to_JSON.py <employee_id>")
-        sys.exit(1)
-
-    try:
-        employee_id = int(sys.argv[1])
-        export_to_json(employee_id)
-    except ValueError:
-        print("Employee ID must be an integer.")
-        sys.exit(1)
+    with open(f"{iD}.json", "w") as jf:
+        json.dump(data, jf, indent=4)
