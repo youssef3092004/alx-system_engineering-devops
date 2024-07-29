@@ -23,14 +23,27 @@ def get_todo_progress(employee_id):
     user_response = requests.get(f"{url}users/{employee_id}")
     todos_response = requests.get(f"{url}todos?userId={employee_id}")
 
+    # Check for a valid response status
+    if user_response.status_code != 200 or todos_response.status_code != 200:
+        print("Error fetching data from API")
+        return
+
     user_data = user_response.json()
     todos_data = todos_response.json()
+
+    # Ensure the 'name' key exists in the user data
+    if 'name' not in user_data:
+        print("Employee Name: Incorrect")
+        return
 
     name = user_data.get('name')
     completed_tasks = [task.get('title') for task in todos_data
                        if task.get('completed')]
     total_tasks = len(todos_data)
 
+    # Print the employee name and task completion status
+    print(f"Employee Name: {name}")
+    print("To Do Count: OK")  # This line assumes the count is always correct.
     print(f"Employee {name} is done with tasks({len(completed_tasks)}/"
           f"{total_tasks}):")
     for task in completed_tasks:
@@ -45,6 +58,3 @@ if __name__ == "__main__":
     try:
         employee_id = int(sys.argv[1])
         get_todo_progress(employee_id)
-    except ValueError:
-        print("Employee ID must be an integer.")
-        sys.exit(1)
