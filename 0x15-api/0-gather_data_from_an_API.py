@@ -1,41 +1,38 @@
 #!/usr/bin/python3
-"""A Python script that, using this REST API, for a given employee ID."""
+""" script that, using this REST API, for a given employee ID,
+returns information about his/her TODO list progress."""
 import requests
 from sys import argv
 
-
-def display_tasks():
-    """Python script that fetches data for a given employee ID."""
-    # link to fetch data from the API
-    link = "https://jsonplaceholder.typicode.com/users/"
-
-    # get the data from
-    response = requests.get(link + argv[1])
-
-    # convert the data to json format
-    data = response.json()
-
-    # get the name of the employee
-    name = data.get("name")
-    print("Employee {} is done with tasks".format(name), end="")
-
-    # get the total number of tasks of the employee
-    response = requests.get(link + argv[1] + "/todos")
-
-    # convert the data to json format
-    data = response.json()
-
-    # get the completed tasks and the total number of them
-    tasks = []
-    for task in data:
-        if task.get("completed") is True:
-            tasks.append(task.get("title"))
-    print("({}/{}):".format(len(tasks), len(data)))
-
-    # print the completed tasks of the employee
-    for task in tasks:
-        print("\t {}".format(task))
-
-
+tasks = 0
+comp = 0
+titles = []
+getname = 0
+username = ""
+url = "https://jsonplaceholder.typicode.com/todos/"
+res = requests.get(url=url)
+if res.status_code != 200:
+    exit()
+todolist = res.json()
+url = url.replace("todos/", "users/")
+for todo in todolist:
+    try:
+        if todo.get("userId") == int(argv[1]):
+            tasks += 1
+            if getname == 0:
+                getname = 1
+                url += f"{argv[1]}"
+                res = requests.get(url=url)
+                if res.status_code != 200:
+                    continue
+                res = res.json()
+                username = res.get("name")
+            if todo.get("completed") is True:
+                comp += 1
+                titles.append(todo.get("title"))
+    except Exception:
+        pass
 if __name__ == "__main__":
-    display_tasks()
+    print(f"Employee {username} is done with tasks({comp}/{tasks}):")
+    for title in titles:
+        print(f"\t {title}")

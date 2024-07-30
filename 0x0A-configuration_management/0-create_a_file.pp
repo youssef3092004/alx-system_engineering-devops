@@ -7,3 +7,4 @@ file { '/tmp/school':
   content => 'I love Puppet',
   path    => '/tmp/school',
 }
+  

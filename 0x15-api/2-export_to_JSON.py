@@ -1,27 +1,24 @@
 #!/usr/bin/python3
-"""A Python script using this REST API, for a given employee ID."""
+""" script that, using this REST API, for a given employee ID,
+returns information about his/her TODO list progress."""
 import json
-from requests import get
+import requests
 from sys import argv
 
-
-def cvsWrite(user):
-    """Write to csv."""
-    # get the Response from the API endpoint and convert to json format
-    Response = get('https://jsonplaceholder.typicode.com/todos?userId={}'
-                   .format(user)).json()
-    # get the employee name from the API endpoint and convert to json format
-    employee_name = get('https://jsonplaceholder.typicode.com/users/{}'.format(
-        user)).json().get('username')
-    list = []
-    # write the data to a file named USER_ID.json in json format
-    for line in Response:
-        list.append({"task": line.get('title'),
-                     "completed": line.get('completed'),
-                     "username": employee_name})
-    with open('{}.json'.format(user), 'w') as f:
-        json.dump({user: list}, f)
-
-
 if __name__ == "__main__":
-    cvsWrite(argv[1])
+    id = argv[1]
+    url = "https://jsonplaceholder.typicode.com/todos/"
+    todo = requests.get(url=url).json()
+    user = requests.get(url=f"https://jsonplaceholder.typicode.com/users/{id}")
+    user = user.json().get('username')
+    data = {}
+    datalist = []
+    for toodo in todo:
+        if str(toodo.get("userId")) == id:
+            data["task"] = toodo.get("title")
+            data["completed"] = toodo.get("completed")
+            data["username"] = user
+            datalist.append(dict(data))
+    final = {f"{id}": datalist}
+    with open(f"{id}.json", 'w') as jsonf:
+        json.dump(final, jsonf)
