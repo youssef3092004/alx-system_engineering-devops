@@ -8,4 +8,5 @@ do
     else
         echo "Best School"
         ((count+=1))
+    fi
 done
