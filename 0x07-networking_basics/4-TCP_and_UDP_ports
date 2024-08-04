@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # Display listening ports using netstat
-netstat -tuln
+netstat -lp
