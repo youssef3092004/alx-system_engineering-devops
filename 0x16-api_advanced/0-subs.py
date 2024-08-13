@@ -26,3 +26,7 @@ def number_of_subscribers(subreddit):
         return results.get('data', {}).get('subscribers', 0)
     except ValueError:
         return 0
+        if __name__ == "__main__":
+            subreddit = input("Enter the subreddit: ")
+            subscribers = number_of_subscribers(subreddit)
+            print("Number of subscribers:", subscribers)
