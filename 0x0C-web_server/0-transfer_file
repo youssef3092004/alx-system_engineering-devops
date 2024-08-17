@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# moving file from my machine to the server
-if  [$# -lt 3]; then
-    echo "Usage: 0-transfer_file PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
-    exit 1
-fi
-if [$# -eq 4]; then
-    scp -o StrictHostKeyChecking=no -i $4 $1 $3@$2:~/
+# Bash script that transfers a file from client to a server
+
+if [ "$4" ]; then
+   scp -i "$4" -o StrictHostKeyChecking=no "$1" "$3@$2":~
+elif [ "$3" ]; then
+     scp -o StrictHostKeyChecking=no "$1" "$3@$2"~
 else
-    scp -o StrictHostKeyChecking=no$1 $3@$2:/tmp
+	echo "Usage: 0-transfer_file PATH_TO_FILE IP USERNAME PATH_TO_SSH_KEY"
 fi
