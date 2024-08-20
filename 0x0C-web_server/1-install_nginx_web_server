@@ -1,36 +1,14 @@
 #!/usr/bin/env bash
-#install nginx
+# install teh nginx on the server
 
-# Variables
-BACKUP_FILE="/var/www/html/index.nginx-debian.html.bckp"
-INDEX_FILE="/var/www/html/index.nginx-debian.html"
-LOG_FILE="/var/log/nginx_install.log"
-
-# Update package index and install Nginx
-sudo apt-get update -y 2>&1 | sudo tee -a $LOG_FILE > /dev/null && \
-sudo apt-get install nginx -y 2>&1 | sudo tee -a $LOG_FILE > /dev/null && \
-
-# Start Nginx service
-sudo service nginx start 2>&1 | sudo tee -a $LOG_FILE > /dev/null && \
-
-# Allow HTTP traffic through firewall
-sudo ufw allow 'Nginx HTTP' 2>&1 | sudo tee -a $LOG_FILE > /dev/null && \
-
-# Change ownership and permissions for web root directory
-sudo chown -R "$USER":"$USER" /var/www/html && \
-sudo chmod -R 755 /var/www/html && \
-
-# Backup the default Nginx index file and replace with "Hello World!"
-cp $INDEX_FILE $BACKUP_FILE && \
-echo "Hello World!" | sudo tee $INDEX_FILE > /dev/null && \
-
-# Restart Nginx
-if pgrep -x "nginx" > /dev/null; then
-    echo "Nginx is running. Restarting..."
-    sudo service nginx restart 2>&1 | sudo tee -a $LOG_FILE > /dev/null
-else
-    echo "Nginx is not running. Starting..."
-    sudo service nginx start 2>&1 | sudo tee -a $LOG_FILE > /dev/null
-fi
-
-echo "Nginx installed and configured. Log file: $LOG_FILE"
+sudo apt update
+sudo apt install nginx
+sudo ufw app list
+sudo ufw allow 'Nginx HTTP'
+sudo ufw status
+systemctl status nginx
+sudo systemctl start nginx
+sudo mkdir -p /var/www/html
+sudo chmod -R 755 /var/www/html
+echo "Hello World!" | sudo tee /var/www/html/index.html > /dev/null
+sudo nginx -s reload
